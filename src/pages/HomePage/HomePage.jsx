@@ -1,26 +1,50 @@
 import styled from "styled-components"
+import axios from 'axios';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function HomePage() {
+
+
+    const [images, setImages] = useState([]);
+
+    // executa esse código apenas uma vez! Quando eu abrir a pagina
+    useEffect(() => {
+      const URL = 'https://mock-api.driven.com.br/api/v8/cineflex/movies';
+  
+      const promise = axios.get(URL);
+  
+      promise.then((answer) => {
+        console.log(answer.data);
+        setImages(answer.data);
+      }); // se der certo e os dados chegarem
+  
+      promise.catch((erro) => {
+        console.log(erro.response.data);
+      }); // se der erro
+  
+    }, []);
+  
+    if (images.length === 0) {
+      return (<div> Carregando..... </div>);
+    }
+
+
+
     return (
         <PageContainer>
             Selecione o filme
 
             <ListContainer>
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
 
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
+                {images.map(image => (
+                    <Link to='/b' key={image.id}>
+                        <MovieContainer key={image.id}>
+                            <img src={image.posterURL} alt="poster"/>
+                        </MovieContainer>
+                    </Link>
+                ))}
 
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
-
-                <MovieContainer>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster"/>
-                </MovieContainer>
             </ListContainer>
 
         </PageContainer>
