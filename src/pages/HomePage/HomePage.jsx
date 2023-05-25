@@ -2,9 +2,11 @@ import styled from "styled-components"
 import axios from 'axios';
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import loading from "./../../assets/Loading_icon.gif"
 
 export default function HomePage() {
 
+    //const params = useParams();
 
     const [images, setImages] = useState([]);
 
@@ -26,7 +28,7 @@ export default function HomePage() {
     }, []);
   
     if (images.length === 0) {
-      return (<div> Carregando..... </div>);
+      return (<Loading><img src={loading} /></Loading>);
     }
 
 
@@ -38,8 +40,8 @@ export default function HomePage() {
             <ListContainer>
 
                 {images.map(image => (
-                    <Link to='/b' key={image.id}>
-                        <MovieContainer key={image.id}>
+                    <Link to={`/sessoes/${image.id}`} key={image.id} data-test="movie">
+                        <MovieContainer key={image.id} data-test="movie">
                             <img src={image.posterURL} alt="poster"/>
                         </MovieContainer>
                     </Link>
@@ -50,6 +52,13 @@ export default function HomePage() {
         </PageContainer>
     )
 }
+
+const Loading = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    padding-top: 300px;
+`
 
 const PageContainer = styled.div`
     display: flex;

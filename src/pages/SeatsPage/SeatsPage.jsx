@@ -1,57 +1,95 @@
+import { useState } from "react"
 import styled from "styled-components"
+import loading from "./../../assets/Loading_icon.gif"
+import { useParams } from "react-router-dom"
+import { useEffect } from "react"
+import axios from "axios"
+
+
 
 export default function SeatsPage() {
+
+    const [session, setSession] = useState(undefined)
+
+    const params = useParams();
+    console.log(params)
+
+    useEffect( () => {
+
+        const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${params.idSessao}/seats`;
+
+        const promise = axios.get(url)
+
+        promise.then((answer) => {
+            setSession(answer.data);
+            console.log(answer.data)
+          })
+        promise.catch((erro) => {
+            console.log(erro.response.data);}
+            );
+    }, [params])
+
+
+    if (session === undefined) {
+        return (<Loading><img src={loading} /></Loading>);
+      }
+
+    const seats = session.seats;  
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
-
             <SeatsContainer>
-                <SeatItem>01</SeatItem>
-                <SeatItem>02</SeatItem>
-                <SeatItem>03</SeatItem>
-                <SeatItem>04</SeatItem>
-                <SeatItem>05</SeatItem>
+            {seats.map( seat =>  (
+                <SeatItem key={seat.id} isAvailable={seat.isAvailable} data-test="seat">{seat.name}</SeatItem>
+            ))}               
             </SeatsContainer>
 
             <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle />
+                <CaptionItem> 
+                    <CaptionCircle color="#1AAE9E" border='#0E7D71'/>
                     Selecionado
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle color="#C3CFD9" border='#7B8B99'/>
                     Disponível
                 </CaptionItem>
                 <CaptionItem>
-                    <CaptionCircle />
+                    <CaptionCircle color="#FBE192" border='#F7C52B'/>
                     Indisponível
                 </CaptionItem>
             </CaptionContainer>
 
             <FormContainer>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." />
+                <input placeholder="Digite seu nome..." data-test="client-name"/>
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." />
+                <input placeholder="Digite seu CPF..." data-test="client-cpf"/>
 
-                <button>Reservar Assento(s)</button>
+                <button data-test="book-seat-btn">Reservar Assento(s)</button>
             </FormContainer>
 
-            <FooterContainer>
+            <FooterContainer  data-test="footer">
                 <div>
-                    <img src={"https://br.web.img2.acsta.net/pictures/22/05/16/17/59/5165498.jpg"} alt="poster" />
+                    <img src={session.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>Tudo em todo lugar ao mesmo tempo</p>
-                    <p>Sexta - 14h00</p>
+                    <p>{session.movie.title}</p>
+                    <p>{session.day.weekday} - {session.day.date}</p>
                 </div>
             </FooterContainer>
 
         </PageContainer>
     )
 }
+
+const Loading = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content:center;
+    padding-top: 300px;
+`
 
 const PageContainer = styled.div`
     display: flex;
@@ -96,8 +134,8 @@ const CaptionContainer = styled.div`
     margin: 20px;
 `
 const CaptionCircle = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    border: 1px solid ${props => props.border};
+    background-color: ${props => props.color};
     height: 25px;
     width: 25px;
     border-radius: 25px;
@@ -113,8 +151,8 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    border: 1px solid blue;         // Essa cor deve mudar
-    background-color: lightblue;    // Essa cor deve mudar
+    background-color: ${props => (props.isAvailable === true ? '#C3CFD9' : '#FBE192')};
+    border: 1px solid ${props => (props.isAvailable === true ? '#7B8B99' : '#F7C52B')};
     height: 25px;
     width: 25px;
     border-radius: 25px;
