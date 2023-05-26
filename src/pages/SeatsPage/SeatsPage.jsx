@@ -42,10 +42,25 @@ export default function SeatsPage() {
 
     const seats = session.seats;  
 
+
+
+    function confirm(e) {
+        e.preventDefault();
+
+        const order = {ids: selectSeat, name: name, cpf: cpf}
+        const urlpost = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many'
+
+        const promise = axios.post(urlpost, order)
+
+        promise.then( answer => {navigate('/sucesso'), { state: { order } }})
+        promise.catch(err => err.data)
+    }
+
     function selectSeats(seat) {
         if(selectSeat.includes(seat) ) {
             seat.selected = false;
-            const arr = selectSeat.filter(seat => !seat)
+            const arr = selectSeat.filter(seat => seat.selected === true)
+            console.log(arr)
             setselectSeat(arr)
             return seat.isAvailable = true
         }
@@ -56,30 +71,17 @@ export default function SeatsPage() {
             seat.selected = true;
             const arr = [...selectSeat, seat];
             setselectSeat(arr)      
+            console.log(arr)
 
         }
     }
-
-    function confirm(e) {
-        e.preventDefault();
-
-        const order = {ids: selectSeat, name: name, cpf: cpf}
-        const urlpost = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many'
-
-        const promise = axios.post(urlpost, order)
-
-        promise.then( answer => {navigate('/sucesso')})
-        
-    }
-
-    const selected = false;
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
             <SeatsContainer>
             {seats.map( seat =>  (
-                <SeatItem key={seat.id} isAvailable={seat.isAvailable} data-test="seat" selected={selected} onClick={() => selectSeats(seat)}>{seat.name}</SeatItem>
+                <SeatItem key={seat.id} isAvailable={seat.isAvailable} data-test="seat" selected={seat.selected} onClick={() => selectSeats(seat)}>{seat.name}</SeatItem>
             ))}               
             </SeatsContainer>
 
@@ -105,7 +107,7 @@ export default function SeatsPage() {
                 value={name} onChange={(e) => setName(e.target.value)}/>
 
                 <label htmlFor="cpf">CPF do Comprador:</label>
-                <input placeholder="Digite seu CPF..." data-test="client-cpf" type="number"  required id="cpf" 
+                <input placeholder="Digite seu CPF..." data-test="client-cpf" type="text"  required id="cpf" 
                 value={cpf} onChange={(e) => setCpf(e.target.value)}/> 
 
                 <button data-test="book-seat-btn" type="submit" style={{textDecoration: 'none',alignSelf: "center",}}>Reservar Assento(s)</button>

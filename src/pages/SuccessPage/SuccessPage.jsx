@@ -1,6 +1,11 @@
 import styled from "styled-components"
+import { useLocation } from "react-router-dom";
 
 export default function SuccessPage() {
+
+    const { state } = useLocation();
+
+    console.log(state);
 
     return (
         <PageContainer>
