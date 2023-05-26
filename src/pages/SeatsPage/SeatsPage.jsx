@@ -15,7 +15,6 @@ export default function SeatsPage() {
     const [selectSeat, setselectSeat] = useState([]);
     const [name, setName] = useState('')
     const [cpf, setCpf] = useState('')
-
     const params = useParams();
     console.log(params)
 
@@ -48,11 +47,13 @@ export default function SeatsPage() {
         e.preventDefault();
 
         const order = {ids: selectSeat, name: name, cpf: cpf}
+        console.log(order)
+
         const urlpost = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many'
 
         const promise = axios.post(urlpost, order)
 
-        promise.then( answer => {navigate('/sucesso'), { state: { order } }})
+        promise.then( answer => {navigate('/sucesso', { state: {order, session} })})
         promise.catch(err => err.data)
     }
 
@@ -201,6 +202,7 @@ const SeatItem = styled.div`
     width: 25px;
     border-radius: 25px;
     font-family: 'Roboto';
+    cursor: pointer;
     font-size: 11px;
     display: flex;
     align-items: center;

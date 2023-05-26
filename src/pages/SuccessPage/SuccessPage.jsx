@@ -1,11 +1,11 @@
 import styled from "styled-components"
 import { useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function SuccessPage() {
 
-    const { state } = useLocation();
-
-    console.log(state);
+    const status = useLocation().state; 
+    console.log(status);
 
     return (
         <PageContainer>
@@ -13,24 +13,29 @@ export default function SuccessPage() {
 
             <TextContainer>
                 <strong><p>Filme e sessão</p></strong>
-                <p>Tudo em todo lugar ao mesmo tempo</p>
-                <p>03/03/2023 - 14:00</p>
+                <p>{status.session.movie.title}</p>
+                <p>{status.session.day.date} - {status.session.name}</p>
             </TextContainer>
 
             <TextContainer>
                 <strong><p>Ingressos</p></strong>
                 <p>Assento 01</p>
+
+                {/* {assentos.map(seat => (
+                    <p key='status.order.ids'>Assento {seat}</p>
+                ))} */}
                 <p>Assento 02</p>
                 <p>Assento 03</p>
             </TextContainer>
 
             <TextContainer>
                 <strong><p>Comprador</p></strong>
-                <p>Nome: Letícia Chijo</p>
-                <p>CPF: 123.456.789-10</p>
+                <p>Nome: {status.order.name}</p>
+                <p>CPF: {status.order.cpf}</p>
             </TextContainer>
-
+            <Link to='/'>
             <button>Voltar para Home</button>
+            </Link>
         </PageContainer>
     )
 }
@@ -42,7 +47,7 @@ const PageContainer = styled.div`
     font-family: 'Roboto';
     font-size: 24px;
     color: #293845;
-    margin: 30px 20px;
+    margin: 20px 20px;
     padding-bottom: 120px;
     padding-top: 70px;
     a {
@@ -50,6 +55,7 @@ const PageContainer = styled.div`
     }
     button {
         margin-top: 50px;
+        cursor: pointer;
     }
     h1 {
         font-family: 'Roboto';
@@ -68,7 +74,7 @@ const TextContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 30px;
+    margin-top: 10px;
     strong {
         font-weight: bold;
         margin-bottom: 10px;

@@ -87,6 +87,7 @@ const MovieContainer = styled.div`
     align-items: center;
     justify-content: center;
     margin: 10px;
+    cursor: pointer;
     img {
         width: 130px;
         height: 190px;
