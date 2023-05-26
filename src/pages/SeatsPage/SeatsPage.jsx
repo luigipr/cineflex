@@ -70,7 +70,7 @@ export default function SeatsPage() {
         }
         if (seat.isAvailable) {
             seat.selected = true;
-            const arr = [...selectSeat, seat];
+            const arr = [...selectSeat, seat.id];
             setselectSeat(arr)      
             console.log(arr)
 
