@@ -1,7 +1,7 @@
 import { useState } from "react"
 import styled from "styled-components"
 import loading from "./../../assets/Loading_icon.gif"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { useEffect } from "react"
 import axios from "axios"
 
@@ -9,16 +9,21 @@ import axios from "axios"
 
 export default function SeatsPage() {
 
+    const navigate = useNavigate();
+
     const [session, setSession] = useState(undefined)
+    const [selectSeat, setselectSeat] = useState([]);
+    const [name, setName] = useState('')
+    const [cpf, setCpf] = useState('')
 
     const params = useParams();
     console.log(params)
 
     useEffect( () => {
 
-        const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${params.idSessao}/seats`;
+        const urlget = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${params.idSessao}/seats`;
 
-        const promise = axios.get(url)
+        const promise = axios.get(urlget)
 
         promise.then((answer) => {
             setSession(answer.data);
@@ -34,14 +39,47 @@ export default function SeatsPage() {
         return (<Loading><img src={loading} /></Loading>);
       }
 
+
     const seats = session.seats;  
+
+    function selectSeats(seat) {
+        if(selectSeat.includes(seat) ) {
+            seat.selected = false;
+            const arr = selectSeat.filter(seat => !seat)
+            setselectSeat(arr)
+            return seat.isAvailable = true
+        }
+        if (seat.isAvailable === false) {
+            return alert("Esse assento não está disponível")
+        }
+        if (seat.isAvailable) {
+            seat.selected = true;
+            const arr = [...selectSeat, seat];
+            setselectSeat(arr)      
+
+        }
+    }
+
+    function confirm(e) {
+        e.preventDefault();
+
+        const order = {ids: selectSeat, name: name, cpf: cpf}
+        const urlpost = 'https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many'
+
+        const promise = axios.post(urlpost, order)
+
+        promise.then( answer => {navigate('/sucesso')})
+        
+    }
+
+    const selected = false;
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
             <SeatsContainer>
             {seats.map( seat =>  (
-                <SeatItem key={seat.id} isAvailable={seat.isAvailable} data-test="seat">{seat.name}</SeatItem>
+                <SeatItem key={seat.id} isAvailable={seat.isAvailable} data-test="seat" selected={selected} onClick={() => selectSeats(seat)}>{seat.name}</SeatItem>
             ))}               
             </SeatsContainer>
 
@@ -61,13 +99,17 @@ export default function SeatsPage() {
             </CaptionContainer>
 
             <FormContainer>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." data-test="client-name"/>
+                <form onSubmit={confirm}>
+                <label htmlFor="name">Nome do Comprador:</label>
+                <input placeholder="Digite seu nome..." data-test="client-name" type="text" required id="nome" 
+                value={name} onChange={(e) => setName(e.target.value)}/>
 
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." data-test="client-cpf"/>
+                <label htmlFor="cpf">CPF do Comprador:</label>
+                <input placeholder="Digite seu CPF..." data-test="client-cpf" type="number"  required id="cpf" 
+                value={cpf} onChange={(e) => setCpf(e.target.value)}/> 
 
-                <button data-test="book-seat-btn">Reservar Assento(s)</button>
+                <button data-test="book-seat-btn" type="submit" style={{textDecoration: 'none',alignSelf: "center",}}>Reservar Assento(s)</button>
+                </form>
             </FormContainer>
 
             <FooterContainer  data-test="footer">
@@ -151,8 +193,8 @@ const CaptionItem = styled.div`
     font-size: 12px;
 `
 const SeatItem = styled.div`
-    background-color: ${props => (props.isAvailable === true ? '#C3CFD9' : '#FBE192')};
-    border: 1px solid ${props => (props.isAvailable === true ? '#7B8B99' : '#F7C52B')};
+    background-color: ${props => (props.isAvailable === false ? '#FBE192' : (props.selected === true ? '#0E7D71' : '#C3CFD9'))};
+    border: 1px solid ${props => (props.isAvailable === false ? '#F7C52B' : (props.selected === true ? "#1AAE9E" : '#7B8B99'))};
     height: 25px;
     width: 25px;
     border-radius: 25px;
