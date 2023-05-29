@@ -12,8 +12,6 @@ export default function App() {
 
 
 
-
-
     return (
         <>
             <BrowserRouter>
@@ -43,6 +41,7 @@ const NavContainer = styled.div`
     font-size: 34px;
     position: fixed;
     top: 0;
+    
     a {
         text-decoration: none;
         color: #E8833A;
