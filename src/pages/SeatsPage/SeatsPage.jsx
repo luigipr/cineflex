@@ -124,7 +124,7 @@ export default function SeatsPage() {
                 </div>
                 <div>
                     <p>{session.movie.title}</p>
-                    <p>{session.day.weekday} - {session.day.date}</p>
+                    <p>{session.day.weekday} - {session.name}</p>
                 </div>
             </FooterContainer>
 
