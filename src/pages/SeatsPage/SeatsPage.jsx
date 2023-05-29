@@ -46,6 +46,9 @@ export default function SeatsPage() {
     function confirm(e) {
         e.preventDefault();
 
+         const orderFinal = {ids: session.seats.filter( seat => seat.selected), name: name, cpf: cpf}
+        // console.log(orderFinal)
+        //select.map(seat => seat.id)
         const order = {ids: selectSeat, name: name, cpf: cpf}
         console.log(order)
 
@@ -53,7 +56,7 @@ export default function SeatsPage() {
 
         const promise = axios.post(urlpost, order)
 
-        promise.then( answer => {navigate('/sucesso', { state: {order, session} })})
+        promise.then( answer => {navigate('/sucesso', { state: {order, session, orderFinal} })})
         promise.catch(err => err.data)
     }
 

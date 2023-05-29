@@ -6,35 +6,33 @@ export default function SuccessPage() {
 
     const status = useLocation().state; 
     console.log(status);
-
+    const seats = status.orderFinal.ids
+    console.log(seats)
     return (
         <PageContainer>
             <h1>Pedido feito <br /> com sucesso!</h1>
 
-            <TextContainer>
+            <TextContainer data-test="movie-info">
                 <strong><p>Filme e sessão</p></strong>
                 <p>{status.session.movie.title}</p>
                 <p>{status.session.day.date} - {status.session.name}</p>
             </TextContainer>
 
-            <TextContainer>
-                <strong><p>Ingressos</p></strong>
-                <p>Assento 01</p>
+            <TextContainer data-test="seats-info">
+                {/* <strong><p>Ingressos</p></strong> */}
 
-                {/* {assentos.map(seat => (
-                    <p key='status.order.ids'>Assento {seat}</p>
-                ))} */}
-                <p>Assento 02</p>
-                <p>Assento 03</p>
+                {seats.map( (id) => (
+                    <p key='status.orderFinal.ids'>Assento {id.name}</p>
+                ))} 
             </TextContainer>
 
-            <TextContainer>
+            <TextContainer data-test="client-info">
                 <strong><p>Comprador</p></strong>
                 <p>Nome: {status.order.name}</p>
                 <p>CPF: {status.order.cpf}</p>
             </TextContainer>
             <Link to='/'>
-            <button>Voltar para Home</button>
+            <button data-test="go-home-btn" >Voltar para Home</button>
             </Link>
         </PageContainer>
     )
